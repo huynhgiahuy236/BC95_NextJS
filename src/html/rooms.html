@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh sách phòng — BC95 Hotel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gray-50">
+
+    <!--
+    TRANG DANH SÁCH PHÒNG — /rooms
+    Trong Next.js đây là Server Component (không có "use client").
+    - Render trên server, gửi HTML tĩnh xuống client → tốt cho SEO.
+    - Fetch data trực tiếp trong component, không cần useEffect/useState.
+    - Next.js Image tự tối ưu ảnh: lazy load, WebP, responsive srcset.
+    - Grid responsive: 1 cột mobile → 2 cột sm → 3 cột lg (Tailwind breakpoints).
+  -->
+
+    <!-- Header trang -->
+    <div class="bg-white border-b border-gray-200 px-4 py-6">
+        <div class="max-w-6xl mx-auto">
+            <!-- Breadcrumb: điều hướng phân cấp trang -->
+            <nav class="text-xs text-gray-400 mb-2">
+                <a href="index.html" class="hover:text-gray-600">Trang chủ</a>
+                <span class="mx-1">›</span>
+                <span class="text-gray-600">Danh sách phòng</span>
+            </nav>
+            <div class="flex items-end justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Danh sách phòng</h1>
+                    <!-- Tính toán trên server: rooms.filter(r => r.available).length -->
+                    <p class="text-sm text-gray-500 mt-1">4/6 phòng còn trống</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid danh sách phòng -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!--
+      Responsive grid Tailwind:
+      - grid-cols-1: mobile mặc định (1 cột)
+      - sm:grid-cols-2: ≥640px → 2 cột
+      - lg:grid-cols-3: ≥1024px → 3 cột
+      rooms.map(room => <RoomCard key={room.id} room={room} />)
+    -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="roomGrid">
+
+            <!-- ── RoomCard 1: Standard ── -->
+            <!--
+        RoomCard: sub-component trong Next.js, nhận prop `room`.
+        Link bao ngoài toàn card → click vào đâu cũng navigate.
+        href="/rooms/[id]" → dynamic route của Next.js.
+      -->
+            <a href="room-detail.html"
+                class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <!-- Next.js <Image fill>: object-cover, tự scale khi hover -->
+                <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80"
+                        alt="Phòng Standard 101"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <!-- Badge trạng thái: overlay góc trên phải -->
+                    <span
+                        class="absolute top-3 right-3 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        Còn phòng
+                    </span>
+                </div>
+                <div class="p-4 flex flex-col gap-2 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-gray-900 text-sm leading-snug">Phòng Standard 101</h3>
+                        <!-- roomTypeBadge[room.type]: lookup object → class Tailwind tương ứng -->
+                        <span
+                            class="text-xs px-2 py-0.5 rounded-full shrink-0 bg-gray-100 text-gray-700">Standard</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-gray-500">
+                        <span>📐 25 m²</span>
+                        <span>👥 2 người</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                        <span class="text-amber-400">★</span>
+                        <span class="font-medium text-gray-700">4.2</span>
+                        <span>(38 đánh giá)</span>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-blue-600">500.000đ</span>
+                            <span class="text-xs text-gray-400"> / đêm</span>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 group-hover:underline">Xem chi tiết →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── RoomCard 2: Deluxe ── -->
+            <a href="room-detail.html"
+                class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&q=80"
+                        alt="Phòng Deluxe 201"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span
+                        class="absolute top-3 right-3 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        Còn phòng
+                    </span>
+                </div>
+                <div class="p-4 flex flex-col gap-2 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-gray-900 text-sm leading-snug">Phòng Deluxe 201</h3>
+                        <span class="text-xs px-2 py-0.5 rounded-full shrink-0 bg-blue-100 text-blue-700">Deluxe</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-gray-500">
+                        <span>📐 35 m²</span>
+                        <span>👥 2 người</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                        <span class="text-amber-400">★</span>
+                        <span class="font-medium text-gray-700">4.6</span>
+                        <span>(72 đánh giá)</span>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-blue-600">900.000đ</span>
+                            <span class="text-xs text-gray-400"> / đêm</span>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 group-hover:underline">Xem chi tiết →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── RoomCard 3: Suite (hết phòng) ── -->
+            <a href="room-detail.html"
+                class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80"
+                        alt="Suite Hướng Biển 301"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <!-- Badge "Hết phòng": room.available = false → màu đỏ -->
+                    <span
+                        class="absolute top-3 right-3 text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-600">
+                        Hết phòng
+                    </span>
+                </div>
+                <div class="p-4 flex flex-col gap-2 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-gray-900 text-sm leading-snug">Suite Hướng Biển 301</h3>
+                        <span class="text-xs px-2 py-0.5 rounded-full shrink-0 bg-amber-100 text-amber-700">Suite</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-gray-500">
+                        <span>📐 65 m²</span>
+                        <span>👥 4 người</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                        <span class="text-amber-400">★</span>
+                        <span class="font-medium text-gray-700">4.9</span>
+                        <span>(21 đánh giá)</span>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-blue-600">2.000.000đ</span>
+                            <span class="text-xs text-gray-400"> / đêm</span>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 group-hover:underline">Xem chi tiết →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── RoomCard 4: Standard ── -->
+            <a href="room-detail.html"
+                class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80"
+                        alt="Phòng Standard 102"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span
+                        class="absolute top-3 right-3 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        Còn phòng
+                    </span>
+                </div>
+                <div class="p-4 flex flex-col gap-2 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-gray-900 text-sm leading-snug">Phòng Standard 102</h3>
+                        <span
+                            class="text-xs px-2 py-0.5 rounded-full shrink-0 bg-gray-100 text-gray-700">Standard</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-gray-500">
+                        <span>📐 24 m²</span>
+                        <span>👥 2 người</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                        <span class="text-amber-400">★</span>
+                        <span class="font-medium text-gray-700">4.0</span>
+                        <span>(45 đánh giá)</span>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-blue-600">480.000đ</span>
+                            <span class="text-xs text-gray-400"> / đêm</span>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 group-hover:underline">Xem chi tiết →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── RoomCard 5: Deluxe ── -->
+            <a href="room-detail.html"
+                class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80"
+                        alt="Phòng Deluxe 202"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span
+                        class="absolute top-3 right-3 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        Còn phòng
+                    </span>
+                </div>
+                <div class="p-4 flex flex-col gap-2 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-gray-900 text-sm leading-snug">Phòng Deluxe 202</h3>
+                        <span class="text-xs px-2 py-0.5 rounded-full shrink-0 bg-blue-100 text-blue-700">Deluxe</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-gray-500">
+                        <span>📐 38 m²</span>
+                        <span>👥 3 người</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                        <span class="text-amber-400">★</span>
+                        <span class="font-medium text-gray-700">4.5</span>
+                        <span>(59 đánh giá)</span>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-blue-600">950.000đ</span>
+                            <span class="text-xs text-gray-400"> / đêm</span>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 group-hover:underline">Xem chi tiết →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- ── RoomCard 6: Suite Gia Đình ── -->
+            <a href="room-detail.html"
+                class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80"
+                        alt="Suite Gia Đình 302"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span
+                        class="absolute top-3 right-3 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        Còn phòng
+                    </span>
+                </div>
+                <div class="p-4 flex flex-col gap-2 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-gray-900 text-sm leading-snug">Suite Gia Đình 302</h3>
+                        <span class="text-xs px-2 py-0.5 rounded-full shrink-0 bg-amber-100 text-amber-700">Suite</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-gray-500">
+                        <span>📐 80 m²</span>
+                        <span>👥 6 người</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                        <span class="text-amber-400">★</span>
+                        <span class="font-medium text-gray-700">4.8</span>
+                        <span>(14 đánh giá)</span>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-blue-600">2.500.000đ</span>
+                            <span class="text-xs text-gray-400"> / đêm</span>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 group-hover:underline">Xem chi tiết →</span>
+                    </div>
+                </div>
+            </a>
+
+        </div><!-- end grid -->
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập — BC95 Hotel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+
+    <!--
+    TRANG ĐĂNG NHẬP
+    Trong Next.js đây là Client Component vì dùng react-hook-form.
+    Validation: zodResolver(schema) → email hợp lệ + password >= 6 ký tự.
+  -->
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+
+        <h1 class="text-2xl font-bold text-gray-900 mb-1">Đăng nhập</h1>
+
+        <!-- Link điều hướng → register (Next.js <Link> = client-side navigation) -->
+        <p class="text-sm text-gray-500 mb-6">
+            Chưa có tài khoản?
+            <a href="register.html" class="text-blue-600 hover:underline font-medium">Đăng ký ngay</a>
+        </p>
+
+        <!--
+      Form được quản lý bởi react-hook-form.
+      handleSubmit(onSubmit): chỉ gọi onSubmit khi validate pass.
+    -->
+        <form id="loginForm" class="space-y-4" novalidate>
+
+            <!-- Field Email — {...register("email")} trong React -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input id="email" type="email" placeholder="you@example.com"
+                    class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
+                <!-- errors.email.message: hiện khi zod validate fail -->
+                <p id="emailError" class="mt-1 text-xs text-red-500 hidden"></p>
+            </div>
+
+            <!-- Field Password -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                <input id="password" type="password" placeholder="••••••••"
+                    class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
+                <p id="passwordError" class="mt-1 text-xs text-red-500 hidden"></p>
+            </div>
+
+            <div class="flex justify-end">
+                <a href="#" class="text-xs text-blue-600 hover:underline">Quên mật khẩu?</a>
+            </div>
+
+            <!--
+        disabled khi isSubmitting (react-hook-form formState).
+        Tránh submit nhiều lần trong khi chờ API.
+      -->
+            <button type="submit" id="submitBtn"
+                class="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 active:scale-[.98] transition">
+                Đăng nhập
+            </button>
+        </form>
+    </div>
+
+    <!-- Mimic validate logic của zod + react-hook-form -->
+    <script>
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function validateEmail(v) {
+            if (!v) return 'Email không hợp lệ';
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Email không hợp lệ';
+            return null;
+        }
+        function validatePassword(v) {
+            if (!v || v.length < 6) return 'Mật khẩu tối thiểu 6 ký tự';
+            return null;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const emailErr = validateEmail(emailInput.value);
+            const passErr = validatePassword(passwordInput.value);
+
+            emailError.textContent = emailErr || '';
+            emailError.classList.toggle('hidden', !emailErr);
+            passwordError.textContent = passErr || '';
+            passwordError.classList.toggle('hidden', !passErr);
+
+            if (emailErr || passErr) return;
+
+            // isSubmitting = true
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang đăng nhập...';
+            await new Promise(r => setTimeout(r, 800));
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Đăng nhập';
+            alert('Đăng nhập thành công (demo)!');
+        });
+    </script>
+</body>
+
+</html>

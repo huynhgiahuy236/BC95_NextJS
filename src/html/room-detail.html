@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phòng Deluxe 201 — BC95 Hotel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gray-50">
+
+    <!--
+    TRANG CHI TIẾT PHÒNG — /rooms/[id]
+    Dynamic Route: [id] trong tên thư mục Next.js match /rooms/1, /rooms/2, ...
+    Next.js truyền params.id vào component (phải await params trong Next.js 15+).
+
+    Server Component:
+    - generateStaticParams(): pre-render tất cả route lúc build → load tức thì.
+    - generateMetadata(): set <title> và <meta description> động theo từng phòng → SEO.
+    - notFound(): nếu id không tồn tại → render trang 404 tự động.
+
+    Layout 2 cột (lg):
+    - Cột trái (lg:col-span-2): ảnh + thông tin chi tiết.
+    - Cột phải (lg:col-span-1): booking card với sticky top-6.
+  -->
+
+    <!-- Header + Breadcrumb -->
+    <div class="bg-white border-b border-gray-200 px-4 py-4">
+        <div class="max-w-5xl mx-auto">
+            <!--
+        Breadcrumb: chuỗi điều hướng phân cấp.
+        Trong Next.js dùng <Link> thay <a> để client-side navigation.
+      -->
+            <nav class="text-xs text-gray-400">
+                <a href="index.html" class="hover:text-gray-600">Trang chủ</a>
+                <span class="mx-1">›</span>
+                <a href="rooms.html" class="hover:text-gray-600">Danh sách phòng</a>
+                <span class="mx-1">›</span>
+                <span class="text-gray-600">Phòng Deluxe 201</span>
+            </nav>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 py-8">
+        <!--
+      Grid 2 cột trên desktop, 1 cột trên mobile.
+      lg:grid-cols-3: chia 3 phần → cột trái chiếm 2, cột phải chiếm 1.
+    -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- ══ CỘT TRÁI: ảnh + thông tin (lg:col-span-2) ══ -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Ảnh chính
+             Next.js <Image priority>: tải sớm vì đây là LCP image
+             → cải thiện điểm Core Web Vitals / Lighthouse.
+             fill + object-cover: ảnh phủ kín container giữ tỷ lệ. -->
+                <div class="relative w-full h-72 sm:h-96 rounded-2xl overflow-hidden bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80"
+                        alt="Phòng Deluxe 201" class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Ảnh phụ — room.images.slice(1).map(...) trong Next.js -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="relative h-40 rounded-xl overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
+                            alt="Phòng Deluxe 201 ảnh 2" class="w-full h-full object-cover" />
+                    </div>
+                    <div class="relative h-40 rounded-xl overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=800&q=80"
+                            alt="Phòng Deluxe 201 ảnh 3" class="w-full h-full object-cover" />
+                    </div>
+                </div>
+
+                <!-- Tên phòng + badge loại + trạng thái -->
+                <div class="flex items-start gap-3">
+                    <div class="flex-1">
+                        <h1 class="text-2xl font-bold text-gray-900">Phòng Deluxe 201</h1>
+                        <div class="flex items-center gap-2 mt-1">
+                            <!-- roomTypeBadge["deluxe"] = "bg-blue-100 text-blue-700" -->
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Deluxe</span>
+                            <span class="text-sm text-gray-500">
+                                ★ <strong>4.6</strong> (72 đánh giá)
+                            </span>
+                        </div>
+                    </div>
+                    <!-- room.available = true → xanh lá -->
+                    <span class="text-sm font-medium px-3 py-1 rounded-full bg-green-100 text-green-700">
+                        Còn phòng
+                    </span>
+                </div>
+
+                <!-- Thông số: map qua array [{label, value}] trong Next.js -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 rounded-xl p-3 text-center">
+                        <p class="text-xs text-gray-500">Diện tích</p>
+                        <p class="font-semibold text-gray-800 mt-0.5">35 m²</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-3 text-center">
+                        <p class="text-xs text-gray-500">Sức chứa</p>
+                        <p class="font-semibold text-gray-800 mt-0.5">2 người</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-3 text-center">
+                        <p class="text-xs text-gray-500">Loại phòng</p>
+                        <p class="font-semibold text-gray-800 mt-0.5">Deluxe</p>
+                    </div>
+                </div>
+
+                <!-- Mô tả -->
+                <div>
+                    <h2 class="font-semibold text-gray-900 mb-2">Mô tả</h2>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Phòng Deluxe rộng rãi với giường King Size, view nhìn ra hồ bơi.
+                        Thiết kế sang trọng, phù hợp cho cặp đôi. Không gian thoáng đãng
+                        với ánh sáng tự nhiên, nội thất cao cấp và đầy đủ tiện nghi hiện đại.
+                    </p>
+                </div>
+
+                <!-- Tiện nghi — room.amenities.map() -->
+                <div>
+                    <h2 class="font-semibold text-gray-900 mb-3">Tiện nghi</h2>
+                    <ul class="grid grid-cols-2 gap-2">
+                        <li class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-green-500">✓</span> WiFi miễn phí
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-green-500">✓</span> Điều hòa
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-green-500">✓</span> TV 43 inch
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-green-500">✓</span> Minibar
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-green-500">✓</span> Bồn tắm
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-green-500">✓</span> Ban công
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- end cột trái -->
+
+            <!-- ══ CỘT PHẢI: Booking card ══ -->
+            <div class="lg:col-span-1">
+                <!--
+          sticky top-6: card dính phía trên khi user scroll xuống đọc mô tả.
+          Chỉ hoạt động khi chiều cao cột trái > chiều cao màn hình.
+          Trong Next.js đây vẫn là Server Component — không cần JS để sticky.
+        -->
+                <div class="sticky top-6 bg-white rounded-2xl shadow-md border border-gray-100 p-6 space-y-4">
+
+                    <!-- Giá / đêm -->
+                    <div>
+                        <span class="text-2xl font-bold text-blue-600">900.000đ</span>
+                        <span class="text-sm text-gray-400"> / đêm</span>
+                    </div>
+
+                    <!-- Form chọn ngày — input[type=date] native HTML -->
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Ngày nhận phòng</label>
+                            <input type="date" id="checkin"
+                                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Ngày trả phòng</label>
+                            <input type="date" id="checkout"
+                                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+                        </div>
+                    </div>
+
+                    <!-- Tổng tiền tính động -->
+                    <div id="totalPrice"
+                        class="hidden bg-blue-50 rounded-lg px-3 py-2 text-sm text-blue-700 font-medium"></div>
+
+                    <!--
+            disabled khi room.available = false.
+            Trong Next.js Server Component không cần JS để disable —
+            giá trị được tính trên server và render sẵn vào HTML.
+          -->
+                    <button id="bookBtn"
+                        class="w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                        Đặt phòng ngay
+                    </button>
+
+                    <p class="text-xs text-gray-400 text-center">Miễn phí hủy trước 24 giờ</p>
+                </div>
+            </div><!-- end cột phải -->
+
+        </div><!-- end grid -->
+
+        <!-- Điều hướng quay lại — Next.js <Link href="/rooms"> -->
+        <div class="mt-10">
+            <a href="rooms.html" class="text-sm text-blue-600 hover:underline">
+                ← Quay lại danh sách phòng
+            </a>
+        </div>
+    </main>
+
+    <!-- Tính tổng tiền khi chọn ngày -->
+    <script>
+        const pricePerNight = 900000;
+        const checkin = document.getElementById('checkin');
+        const checkout = document.getElementById('checkout');
+        const totalEl = document.getElementById('totalPrice');
+
+        function calcTotal() {
+            if (!checkin.value || !checkout.value) { totalEl.classList.add('hidden'); return; }
+            const diff = (new Date(checkout.value) - new Date(checkin.value)) / 86400000;
+            if (diff <= 0) { totalEl.classList.add('hidden'); return; }
+            const total = (diff * pricePerNight).toLocaleString('vi-VN');
+            totalEl.textContent = `${diff} đêm × 900.000đ = ${total}đ`;
+            totalEl.classList.remove('hidden');
+        }
+
+        checkin.addEventListener('change', calcTotal);
+        checkout.addEventListener('change', calcTotal);
+
+        // Set min date = hôm nay
+        const today = new Date().toISOString().split('T')[0];
+        checkin.min = today;
+        checkout.min = today;
+
+        document.getElementById('bookBtn').addEventListener('click', () => {
+            if (!checkin.value || !checkout.value) {
+                alert('Vui lòng chọn ngày nhận và trả phòng.');
+                return;
+            }
+            alert('Đặt phòng thành công (demo)!');
+        });
+    </script>
+</body>
+
+</html>
